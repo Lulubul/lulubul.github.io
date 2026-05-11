@@ -1,0 +1,255 @@
+:root{
+  --bg:#f5eedf;
+  --bg2:#ece4d1;
+  --ink:#23492f;
+  --shadow:0 16px 36px rgba(25,50,20,.08), 0 4px 12px rgba(25,50,20,.04);
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+html{scroll-behavior:smooth;background:var(--bg)}
+body{
+  overflow-x:hidden;
+  color:var(--ink);
+  font-family:Georgia,'Times New Roman',serif;
+  background:linear-gradient(180deg, rgba(245,238,223,.18), rgba(236,228,209,.22));
+}
+.story{position:relative}
+.viewport-shell{position:fixed;inset:0;display:grid;place-items:center;pointer-events:none;z-index:5}
+.stage-stack{position:relative;width:min(98vw,720px,calc(98svh * 1000 / 1414));aspect-ratio:1000/1414}
+.stage{
+  --a:0; --p:0; --v:0;
+  position:absolute; inset:0; overflow:hidden; border-radius:18px;
+  opacity:var(--a); isolation:isolate; background:rgba(255,255,255,.04);
+  box-shadow:var(--shadow);
+  transform:translate3d(0, calc((1 - var(--v)) * 4px), 0) scale(calc(.995 + var(--v) * .01));
+  transition:opacity .7s ease;
+}
+.stage::after{
+  content:""; position:absolute; inset:0; z-index:20; pointer-events:none; border-radius:inherit;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.18), inset 0 0 48px rgba(18,45,22,.03);
+}
+.layer{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; pointer-events:none; user-select:none; will-change:transform}
+.base{z-index:1; transform:translate3d(0, calc(var(--p) * -18px), 0) scale(1.02)}
+.sides{z-index:4; opacity:.58; transform:translate3d(calc(var(--p) * -24px), calc(var(--p) * -8px), 0) scale(1.05)}
+.canopy{z-index:6; opacity:.92; transform:translate3d(calc(var(--p) * 16px), calc(var(--p) * -68px), 0) scale(1.1)}
+.foreground{z-index:8; opacity:.9; transform:translate3d(calc(var(--p) * 22px), calc(var(--p) * 105px), 0) scale(1.12)}
+.text-scene .sides{opacity:.14}
+.text-scene .canopy{opacity:.22}
+.text-scene .foreground{opacity:.12}
+.text-softener{position:absolute; inset:0; z-index:9; pointer-events:none; background:linear-gradient(180deg, rgba(255,255,255,.01), rgba(255,255,255,.05)); mix-blend-mode:screen}
+
+.ambient{position:fixed; inset:-6%; pointer-events:none; background-position:center; background-repeat:no-repeat; background-size:cover; will-change:transform}
+.ambient-back{z-index:-4; background-image:linear-gradient(rgba(245,238,223,.18),rgba(245,238,223,.22)), url('assets/pages/page-4.webp'); filter:blur(24px) saturate(1.04) brightness(.98); opacity:1}
+.ambient-mid{z-index:-3; background-image:linear-gradient(rgba(255,255,255,.06),rgba(255,255,255,.09)), url('assets/pages/page-4.webp'); filter:blur(54px); opacity:.35; mix-blend-mode:screen}
+.ambient-light{z-index:-2; background:radial-gradient(circle at 20% 30%, rgba(255,255,255,.18), transparent 18%), radial-gradient(circle at 80% 70%, rgba(255,243,189,.14), transparent 17%), radial-gradient(circle at 50% 50%, rgba(232,223,196,.16), transparent 32%)}
+
+.global-floaters,.inner-floaters{position:absolute; inset:0; overflow:hidden; pointer-events:none}
+.global-floaters{position:fixed; z-index:2}
+.inner-floaters{z-index:12}
+.global-floaters span,.inner-floaters span{position:absolute; display:block; will-change:transform; filter:drop-shadow(0 1px 4px rgba(26,50,20,.12))}
+.leaf{width:32px; height:13px; background:linear-gradient(90deg,#f3e58a,#cad25f); border-radius:90% 18% 78% 20%; opacity:.78}
+.petal{width:14px; height:22px; background:rgba(255,244,214,.84); border-radius:80% 20% 70% 30%; opacity:.78}
+.spark{width:5px; height:5px; border-radius:50%; background:#fff5a0; box-shadow:0 0 8px 3px rgba(255,245,160,.34); opacity:.65}
+.inner-floaters.quiet .leaf,.inner-floaters.quiet .petal,.inner-floaters.quiet .spark{opacity:.22}
+
+.lf1{left:5%;top:16%;animation:leafDrift 12s ease-in-out infinite alternate}.lf2{left:87%;top:25%;animation:leafDrift 11s ease-in-out infinite alternate-reverse}.lf3{left:10%;top:72%;animation:leafDrift 13s ease-in-out infinite alternate}.lf4{left:84%;top:82%;animation:leafDrift 10s ease-in-out infinite alternate-reverse}
+.pf1{left:78%;top:9%;animation:petalDrift 11s ease-in-out infinite alternate}.pf2{left:12%;top:44%;animation:petalDrift 12s ease-in-out infinite alternate-reverse}.pf3{left:67%;top:59%;animation:petalDrift 10s ease-in-out infinite alternate}.pf4{left:22%;top:85%;animation:petalDrift 13s ease-in-out infinite alternate-reverse}
+.sf1{left:52%;top:21%;animation:glowDrift 6s ease-in-out infinite alternate}.sf2{left:30%;top:63%;animation:glowDrift 7s ease-in-out infinite alternate-reverse}.sf3{left:74%;top:73%;animation:glowDrift 5s ease-in-out infinite alternate}
+.a{left:9%;top:18%;animation:leafDrift 10s ease-in-out infinite alternate}.b{left:80%;top:24%;animation:leafDrift 11s ease-in-out infinite alternate-reverse}.c{left:16%;top:74%;animation:petalDrift 10s ease-in-out infinite alternate}.d{left:72%;top:50%;animation:petalDrift 11s ease-in-out infinite alternate-reverse}.e{left:26%;top:58%;animation:glowDrift 6s ease-in-out infinite alternate}
+
+.chapter{height:128svh}
+.chapter:last-of-type{margin-bottom:36svh}
+.progress{position:fixed; right:14px; top:50%; transform:translateY(-50%); display:flex; flex-direction:column; gap:.7rem; z-index:30}
+.dot{width:12px; height:12px; border-radius:50%; background:rgba(255,251,239,.68); border:1px solid rgba(35,73,47,.25); box-shadow:0 4px 10px rgba(25,50,20,.08); transition:all .2s ease}
+.dot.active{background:#fff1a5; transform:scale(1.18); border-color:rgba(35,73,47,.42)}
+.actions{position:fixed; left:50%; bottom:14px; transform:translateX(-50%); z-index:30; display:flex; gap:.7rem; font-family:system-ui,-apple-system,Segoe UI,sans-serif}
+.actions a{text-decoration:none; color:var(--ink); background:rgba(255,251,239,.8); border:1px solid rgba(35,73,47,.12); border-radius:999px; padding:.68rem .95rem; backdrop-filter:blur(10px); box-shadow:0 8px 22px rgba(25,50,20,.08)}
+.actions a:hover{background:rgba(255,251,239,.95)}
+
+@keyframes leafDrift{from{transform:translate3d(-10px,15px,0) rotate(-18deg)}to{transform:translate3d(26px,-34px,0) rotate(18deg)}}
+@keyframes petalDrift{from{transform:translate3d(10px,15px,0) rotate(5deg) scale(.95)}to{transform:translate3d(-22px,-42px,0) rotate(-22deg) scale(1.08)}}
+@keyframes glowDrift{from{transform:translate3d(0,10px,0) scale(.75);opacity:.2}to{transform:translate3d(9px,-16px,0) scale(1.08);opacity:.6}}
+
+@media (max-width:700px){
+  .stage-stack{width:min(99vw,calc(99svh * 1000 / 1414))}
+  .chapter{height:122svh}
+  .chapter:last-of-type{margin-bottom:30svh}
+  .progress{right:10px; gap:.55rem}
+  .dot{width:11px; height:11px}
+  .leaf{width:28px;height:11px}.petal{width:12px;height:20px}
+  .actions a{font-size:.92rem;padding:.62rem .84rem}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.ambient,.stage,.layer,.global-floaters span,.inner-floaters span{animation:none!important;transform:none!important;transition:none!important}}
+
+
+/* Sharper first two scenes: keep text clearer while preserving parallax */
+.stage-1 .base, .stage-2 .base{
+  transform:translate3d(0, calc(var(--p) * -8px), 0) scale(1.006);
+  filter:contrast(1.03) saturate(1.01);
+}
+.stage-1 .sides, .stage-2 .sides{
+  opacity:.16;
+  transform:translate3d(calc(var(--p) * -8px), calc(var(--p) * -2px), 0) scale(1.015);
+}
+.stage-1 .canopy, .stage-2 .canopy{
+  opacity:.22;
+  transform:translate3d(calc(var(--p) * 6px), calc(var(--p) * -18px), 0) scale(1.03);
+}
+.stage-1 .foreground, .stage-2 .foreground{
+  opacity:.14;
+  transform:translate3d(calc(var(--p) * 8px), calc(var(--p) * 28px), 0) scale(1.035);
+}
+.stage-1 .inner-floaters, .stage-2 .inner-floaters{opacity:.72}
+@media (max-width:700px){
+  .stage-1 .sides, .stage-2 .sides{opacity:.13}
+  .stage-1 .canopy, .stage-2 .canopy{opacity:.18}
+  .stage-1 .foreground, .stage-2 .foreground{opacity:.11}
+}
+
+/* Mobile-friendly adjustments */
+html, body {
+  width: 100%;
+  min-height: 100%;
+  overflow-x: hidden;
+  touch-action: pan-y;
+}
+
+body {
+  -webkit-text-size-adjust: 100%;
+}
+
+.viewport-shell {
+  padding:
+    max(10px, env(safe-area-inset-top))
+    max(8px, env(safe-area-inset-right))
+    max(10px, env(safe-area-inset-bottom))
+    max(8px, env(safe-area-inset-left));
+}
+
+.stage-stack {
+  width: min(96vw, 720px, calc(94svh * 1000 / 1414));
+  max-height: calc(100svh - 20px);
+}
+
+.progress {
+  right: max(8px, env(safe-area-inset-right));
+}
+
+.actions {
+  display: none !important;
+}
+
+/* On phones, give the invite nearly the full screen but keep it fully visible */
+@media (max-width: 700px) {
+  .viewport-shell {
+    align-items: center;
+    padding:
+      max(6px, env(safe-area-inset-top))
+      max(4px, env(safe-area-inset-right))
+      max(6px, env(safe-area-inset-bottom))
+      max(4px, env(safe-area-inset-left));
+  }
+
+  .stage-stack {
+    width: min(98vw, calc(96svh * 1000 / 1414));
+    max-height: 96svh;
+  }
+
+  .stage {
+    border-radius: 12px;
+  }
+
+  .progress {
+    right: max(6px, env(safe-area-inset-right));
+    gap: .48rem;
+  }
+
+  .dot {
+    width: 10px;
+    height: 10px;
+  }
+
+  .chapter {
+    height: 122svh;
+  }
+
+  .chapter:last-of-type {
+    margin-bottom: 36svh;
+  }
+
+  .global-floaters {
+    opacity: .72;
+  }
+}
+
+/* On very short mobile screens, shrink slightly so no artwork is cut off */
+@media (max-height: 720px) and (max-width: 700px) {
+  .stage-stack {
+    width: min(95vw, calc(92svh * 1000 / 1414));
+  }
+
+  .progress {
+    opacity: .7;
+  }
+}
+
+/* Landscape phones: keep the portrait artwork visible and centered */
+@media (orientation: landscape) and (max-height: 520px) {
+  .stage-stack {
+    width: min(58vw, calc(94svh * 1000 / 1414));
+  }
+
+  .progress {
+    right: 8px;
+  }
+}
+
+/* Bigger mobile viewport: prioritize phone width instead of shrinking by height */
+@media (max-width: 700px) {
+  .viewport-shell {
+    align-items: center;
+    justify-items: center;
+    padding-left: max(2px, env(safe-area-inset-left));
+    padding-right: max(2px, env(safe-area-inset-right));
+    padding-top: max(4px, env(safe-area-inset-top));
+    padding-bottom: max(4px, env(safe-area-inset-bottom));
+  }
+
+  .stage-stack {
+    width: min(calc(100vw - 6px), 720px) !important;
+    max-width: calc(100vw - 6px);
+    max-height: none !important;
+  }
+
+  .stage {
+    border-radius: 10px;
+  }
+
+  .progress {
+    right: max(4px, env(safe-area-inset-right));
+    transform: translateY(-50%) scale(.92);
+    opacity: .82;
+  }
+
+  .chapter {
+    height: 126svh;
+  }
+
+  .chapter:last-of-type {
+    margin-bottom: 32svh;
+  }
+}
+
+/* Only for very short phones: keep it readable but prevent major clipping */
+@media (max-width: 700px) and (max-height: 590px) {
+  .stage-stack {
+    width: min(calc(96vw - 4px), 720px) !important;
+  }
+}
+
+/* Landscape mobile still needs height-based sizing */
+@media (orientation: landscape) and (max-height: 520px) {
+  .stage-stack {
+    width: min(58vw, calc(94svh * 1000 / 1414)) !important;
+  }
+}
