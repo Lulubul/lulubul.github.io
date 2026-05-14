@@ -1,8 +1,0 @@
-<svg width="1000" height="1414" viewBox="0 0 1000 1414" xmlns="http://www.w3.org/2000/svg">
-  <rect width="1000" height="1414" fill="#f5eedf"/>
-  <rect x="50" y="50" width="900" height="1314" fill="none" stroke="#23492f" stroke-width="2" opacity="0.1"/>
-  <g transform="translate(500, 707)">
-    <text font-family="Georgia, serif" font-size="60" fill="#23492f" text-anchor="middle" letter-spacing="1">CONFIRMARE ȘI DETALII</text>
-    <text y="60" font-family="Georgia, serif" font-size="24" fill="#23492f" text-anchor="middle" opacity="0.5" letter-spacing="4">SCENA IV</text>
-  </g>
-</svg>
