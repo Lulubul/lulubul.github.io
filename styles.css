@@ -16,7 +16,8 @@ html::-webkit-scrollbar { display: none; } /* Chrome/Safari */
 
 body{
   overflow-x: hidden;
-  overflow-y: auto;
+  overflow: hidden;
+  touch-action: none;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
   color:var(--ink);
@@ -64,7 +65,7 @@ body{
   opacity:var(--a); isolation:isolate; background:rgba(255,255,255,.04);
   box-shadow:var(--shadow);
   transform: translate3d(0, calc((1 - var(--v)) * 15px), calc((var(--v) - 1) * 50px)) scale(calc(.98 + var(--v) * .02));
-  transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1), transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1), transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
   contain: strict;
   visibility: var(--vis);
   pointer-events: none;
@@ -73,14 +74,8 @@ body{
   content:""; position:absolute; inset:0; z-index:20; pointer-events:none; border-radius:inherit;
   box-shadow:inset 0 0 0 1px rgba(255,255,255,.18), inset 0 0 48px rgba(18,45,22,.03);
 }
-.layer{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; pointer-events:none; user-select:none; will-change:transform; backface-visibility: hidden;}
-.base{z-index:1; transform:translate3d(0, calc(var(--p) * -20px), 0) scale(1.05); object-fit:cover; object-position:center center;}
-.sides{z-index:4; opacity:.58; transform:translate3d(calc(var(--p) * -35px), calc(var(--p) * -10px), 0) scale(1.08)}
-.canopy{z-index:6; opacity:.92; transform:translate3d(calc(var(--p) * 25px), calc(var(--p) * -75px), 0) scale(1.15)}
-.foreground{z-index:8; opacity:.9; transform:translate3d(calc(var(--p) * 45px), calc(var(--p) * 110px), 0) scale(1.2)}
-.text-scene .sides{opacity:.14}
-.text-scene .canopy{opacity:.22}
-.text-scene .foreground{opacity:.12}
+.layer{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; pointer-events:none; user-select:none; backface-visibility: hidden;}
+.base{z-index:1; object-fit:cover; object-position:center center;}
 .text-softener{position:absolute; inset:0; z-index:9; pointer-events:none; background:linear-gradient(180deg, rgba(255,255,255,.01), rgba(255,255,255,.05)); mix-blend-mode:screen}
 
 .ambient{position:fixed; inset:-6%; pointer-events:none; background-position:center; background-repeat:no-repeat; background-size:cover; will-change:transform}
@@ -159,29 +154,9 @@ body{
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.ambient,.stage,.layer,.global-floaters span,.inner-floaters span{animation:none!important;transform:none!important;transition:none!important}}
 
 
-/* Sharper first two scenes: keep text clearer while preserving parallax */
-.stage-1 .base, .stage-2 .base{
-  transform:translate3d(0, calc(var(--p) * -8px), 0) scale(1.006);
-  filter:contrast(1.03) saturate(1.01);
-}
-.stage-1 .sides, .stage-2 .sides{
-  opacity:.16;
-  transform:translate3d(calc(var(--p) * -8px), calc(var(--p) * -2px), 0) scale(1.015);
-}
-.stage-1 .canopy, .stage-2 .canopy{
-  opacity:.22;
-  transform:translate3d(calc(var(--p) * 6px), calc(var(--p) * -18px), 0) scale(1.03);
-}
-.stage-1 .foreground, .stage-2 .foreground{
-  opacity:.14;
-  transform:translate3d(calc(var(--p) * 8px), calc(var(--p) * 28px), 0) scale(1.035);
-}
-.stage-1 .inner-floaters, .stage-2 .inner-floaters{opacity:.72}
-@media (max-width:700px){
-  .stage-1 .sides, .stage-2 .sides{opacity:.13}
-  .stage-1 .canopy, .stage-2 .canopy{opacity:.18}
-  .stage-1 .foreground, .stage-2 .foreground{opacity:.11}
-}
+/* Simplified scene optimization */
+.stage-1 .base, .stage-2 .base{ filter:contrast(1.03) saturate(1.01); }
+.stage-1 .inner-floaters, .stage-2 .inner-floaters{ opacity:.72 }
 
 /* Mobile-friendly adjustments */
 html, body {

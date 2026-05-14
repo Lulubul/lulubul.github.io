@@ -184,7 +184,7 @@ window.addEventListener('touchend', event => {
 }, {passive:true});
 
 window.addEventListener('wheel', event => { event.preventDefault(); }, {passive:false});
-window.addEventListener('touchmove', event => { if(Math.abs(event.touches[0]?.clientX - touchStartX) > 10) event.preventDefault(); }, {passive:false});
+window.addEventListener('touchmove', event => { event.preventDefault(); }, {passive:false});
 window.addEventListener('keydown', event => {
   const blockKeys = ['ArrowUp','ArrowDown','PageUp','PageDown','Home','End',' '];
   if(blockKeys.includes(event.key)) event.preventDefault();
@@ -217,12 +217,10 @@ function update(){
       a = clamp(fadeIn * fadeOut, 0, 1);
       v = smoothstep(0.15, 0.40, local) * (1 - smoothstep(0.60, 0.85, local));
     }
-    const p = (local - 0.5) * 2.0;
 
     // Optimization: Only update styles for visible or transitioning stages
     if (a > 0 || stage.style.getPropertyValue('--a') > 0) {
       stage.style.setProperty('--a', clamp(a,0,1).toFixed(4));
-      stage.style.setProperty('--p', p.toFixed(4));
       stage.style.setProperty('--v', clamp(v,0,1).toFixed(4));
       stage.style.setProperty('--vis', a > 0.001 ? 'visible' : 'hidden');
     }
@@ -238,3 +236,4 @@ function onScroll(){ if(!ticking){ ticking=true; requestAnimationFrame(update); 
 window.addEventListener('scroll', onScroll, {passive:true});
 window.addEventListener('resize', onScroll);
 update();
+window.scrollTo(0, 0); // Ensure the page starts at the very top (Scene 1) on load/reload.
