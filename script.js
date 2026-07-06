@@ -49,6 +49,12 @@ if (audio) {
   let fadeInterval = null; // To store the interval ID
   const audioToggle = document.getElementById('audio-toggle');
 
+  const setAudioUI = (isMuted, isPlaying) => {
+    if (!audioToggle) return;
+    audioToggle.classList.toggle('muted', isMuted);
+    audioToggle.classList.toggle('playing', isPlaying && !isMuted);
+  };
+
   const fadeAudio = (target) => {
     if (fadeInterval) clearInterval(fadeInterval);
     fadeInterval = setInterval(() => {
@@ -63,44 +69,48 @@ if (audio) {
     }, 50);
   };
 
-  const tryPlay = async () => {
+  const tryPlay = async (reason = 'auto') => {
+    if (!audio || !audio.paused) return;
+
     try {
-      if (audio.paused) {
-        await audio.play();
-        if (!audio.muted) { // Only start fade-in and animation if not muted
-          fadeAudio(targetVolume);
-          
-          // Only show 'playing' state if enough data is buffered to actually hear it
-          if (audio.readyState >= 3) {
-            if (audioToggle) audioToggle.classList.add('playing');
-          } else {
-            audio.addEventListener('canplay', () => {
-              if (audioToggle && !audio.muted) audioToggle.classList.add('playing');
-            }, { once: true });
-          }
-        }
+      audio.muted = false;
+      audio.load();
+      await audio.play();
+      fadeAudio(targetVolume);
+      setAudioUI(false, true);
+
+      if (audio.readyState < 3) {
+        audio.addEventListener('canplay', () => {
+          if (audioToggle && !audio.muted) setAudioUI(false, true);
+        }, { once: true });
       }
     } catch (e) {
-      // Autoplay was prevented. The user will need to interact.
+      audio.muted = true;
+      fadeAudio(0);
+      setAudioUI(true, false);
+
+      if (reason === 'user') {
+        window.setTimeout(() => {
+          if (audio && audio.paused) {
+            audio.muted = false;
+            audio.play().catch(() => {});
+          }
+        }, 120);
+      }
     }
   };
   
   if (audioToggle) {
-    audioToggle.addEventListener('click', async (e) => { // Make this async
+    audioToggle.addEventListener('click', async (e) => {
       e.stopPropagation();
-      audio.muted = !audio.muted;
-      audioToggle.classList.toggle('muted', audio.muted);
 
       if (audio.muted) {
-        audioToggle.classList.remove('playing');
-        fadeAudio(0); 
+        audio.muted = false;
+        await tryPlay('user');
       } else {
-        if (audio.paused) {
-          await tryPlay();
-        } else {
-          fadeAudio(targetVolume);
-          audioToggle.classList.add('playing');
-        }
+        audio.muted = true;
+        fadeAudio(0);
+        setAudioUI(true, false);
       }
     });
   }
@@ -144,8 +154,8 @@ if (audio) {
   // Re-add interaction listeners as a fallback. 
   // If the browser blocks the initial autoplay, the music will start 
   // immediately on the user's first tap or click anywhere on the site.
-  document.addEventListener('click', tryPlay, {once:true});
-  document.addEventListener('touchstart', tryPlay, {once:true});
+  document.addEventListener('click', () => tryPlay('user'), { once: true, passive: true });
+  document.addEventListener('touchstart', () => tryPlay('user'), { once: true, passive: true });
 
   // Handle audio ending (moving inside the if(audio) block to fix scope/null errors)
   audio.addEventListener('ended', () => {
