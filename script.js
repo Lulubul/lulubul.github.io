@@ -30,11 +30,12 @@ function updateNavButtons(){
   }
 }
 
-if(prevBtn){ prevBtn.addEventListener('click',()=>scrollToChapter(activeChapter-1)); }
-if(nextBtn){ nextBtn.addEventListener('click',()=>scrollToChapter(activeChapter+1)); }
+if(prevBtn){ prevBtn.addEventListener('click',()=>{ if(navigator.vibrate)navigator.vibrate(8); scrollToChapter(activeChapter-1); }); }
+if(nextBtn){ nextBtn.addEventListener('click',()=>{ if(navigator.vibrate)navigator.vibrate(8); scrollToChapter(activeChapter+1); }); }
 
 dots.forEach((dot, i) => {
   dot.addEventListener('click', () => {
+    if(navigator.vibrate)navigator.vibrate(6);
     scrollToChapter(i);
     if (audio && audio.paused) tryPlay();
   });
@@ -104,6 +105,9 @@ if (audio) {
     audioToggle.addEventListener('click', async (e) => {
       e.stopPropagation();
 
+      // Haptic feedback on iOS
+      if (navigator.vibrate) navigator.vibrate(10);
+
       if (audio.muted) {
         audio.muted = false;
         await tryPlay('user');
@@ -113,6 +117,12 @@ if (audio) {
         setAudioUI(true, false);
       }
     });
+    
+    // Add touchend for better mobile responsiveness
+    audioToggle.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      audioToggle.click();
+    }, { passive: false });
   }
 
   // Attempt to play audio immediately on script execution.

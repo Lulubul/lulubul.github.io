@@ -20,10 +20,14 @@ body{
   touch-action: none;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
   color:var(--ink);
   font-family:Georgia,'Times New Roman',serif;
   background:linear-gradient(180deg, rgba(245,238,223,.18), rgba(236,228,209,.22));
   background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
+  -webkit-overflow-scrolling: touch;
 }
 .grain {
   position: fixed; inset: -50%; width: 200%; height: 200%;
@@ -194,8 +198,8 @@ body {
   pointer-events:none;
 }
 .nav-btn{
-  width:50px;
-  height:50px;
+  width:56px;
+  height:56px;
   border:none;
   border-radius:50%;
   color: white;
@@ -210,6 +214,10 @@ body {
   justify-content:center;
   cursor:pointer;
   pointer-events:auto;
+  touch-action: manipulation;
+  -webkit-appearance: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 .nav-btn.prev,
 .nav-btn.next{
@@ -355,49 +363,101 @@ body {
 /* Audio Toggle Button */
 .audio-toggle {
   position: fixed;
-  top: max(16px, env(safe-area-inset-top));
-  right: max(16px, env(safe-area-inset-right));
+  top: max(12px, env(safe-area-inset-top));
+  right: max(12px, env(safe-area-inset-right));
   z-index: 100;
-  width: 56px;
-  height: 56px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
-  background: rgba(255, 251, 239, 0.5);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(35, 73, 47, 0.1);
+  background: rgba(255, 251, 239, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(35, 73, 47, 0.15);
   color: var(--ink);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 1.6rem;
-  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  font-size: 1.8rem;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   pointer-events: auto;
-  box-shadow: 0 4px 12px rgba(25, 50, 20, 0.06);
+  box-shadow: 0 8px 16px rgba(25, 50, 20, 0.12);
+  touch-action: manipulation;
+  -webkit-appearance: none;
+  -webkit-user-select: none;
+  user-select: none;
+  padding: 0;
+  border-width: 2px;
+}
+.audio-toggle:active {
+  transform: scale(0.92);
 }
 .audio-toggle:hover {
-  background: rgba(255, 251, 239, 0.85);
-  transform: scale(1.05);
+  background: rgba(255, 251, 239, 0.95);
+  transform: scale(1.08);
+  box-shadow: 0 12px 24px rgba(25, 50, 20, 0.18);
 }
 .audio-toggle.muted::after {
   content: "";
   position: absolute;
-  width: 24px;
-  height: 2px;
+  width: 26px;
+  height: 2.5px;
   background: var(--ink);
   transform: rotate(-45deg);
-  opacity: 0.6;
+  opacity: 0.5;
 }
-.audio-toggle.muted .note-icon { opacity: 0.3; }
+.audio-toggle.muted .note-icon { opacity: 0.25; }
 .audio-toggle.playing .note-icon {
-  animation: notePulse 2s ease-in-out infinite;
+  animation: notePulse 1.8s ease-in-out infinite;
 }
 @keyframes notePulse {
-  0%, 100% { transform: scale(1); opacity: 0.8; }
-  50% { transform: scale(1.15); opacity: 1; }
+  0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.8; }
+  50% { transform: scale(1.12) rotate(8deg); opacity: 1; }
+}
+
+/* Respect reduced motion preferences for better performance on older iPhones */
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+  .audio-toggle.playing .note-icon { animation: none; }
+  .dot.active { animation: none; }
+  .leaf, .petal, .spark { animation: none; }
+}
+
+/* iPhone-specific optimizations */
+@media (max-width: 500px) {
+  .audio-toggle {
+    width: 64px;
+    height: 64px;
+    font-size: 1.9rem;
+  }
+  
+  .nav-btn {
+    width: 60px;
+    height: 60px;
+  }
+  
+  /* Reduce animation load on older devices */
+  .leaf, .petal, .spark {
+    will-change: transform;
+  }
+  
+  /* Ensure buttons have large enough touch targets */
+  .dot::after { inset: -12px; }
 }
 
 /* Focus states for accessibility */
 .nav-btn:focus-visible, .dot:focus-visible, .audio-toggle:focus-visible {
   outline: 2px solid var(--ink);
   outline-offset: 4px;
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .dot, .audio-toggle, .nav-btn {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  
+  .audio-toggle:active, .nav-btn:active {
+    opacity: 0.8;
+  }
 }
