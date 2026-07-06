@@ -257,3 +257,17 @@ window.addEventListener('scroll', onScroll, {passive:true});
 window.addEventListener('resize', onScroll);
 update();
 window.scrollTo(0, 0); // Ensure the page starts at the very top (Scene 1) on load/reload.
+
+// Stop audio when tab closes or user navigates away
+window.addEventListener('pagehide', () => {
+  if (audio) {
+    audio.pause();
+    audio.currentTime = 0;
+  }
+});
+
+window.addEventListener('beforeunload', () => {
+  if (audio) {
+    audio.pause();
+  }
+});
