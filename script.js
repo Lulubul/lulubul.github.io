@@ -4,6 +4,8 @@ const dots = [...document.querySelectorAll('.dot')];
 const prevBtn = document.querySelector('.nav-btn.prev');
 const nextBtn = document.querySelector('.nav-btn.next');
 const audio = document.getElementById('background-audio');
+const entryVeil = document.getElementById('entry-veil');
+const entryButton = document.getElementById('entry-btn');
 const clamp=(n,min,max)=>Math.max(min,Math.min(max,n));
 const smoothstep=(a,b,x)=>{const t=clamp((x-a)/(b-a),0,1);return t*t*(3-2*t)};
 let ticking=false;
@@ -70,6 +72,13 @@ if (audio) {
     }, 50);
   };
 
+  const dismissEntry = () => {
+    if (!entryVeil) return;
+    entryVeil.classList.add('hidden');
+    entryVeil.setAttribute('aria-hidden', 'true');
+    entryVeil.setAttribute('inert', '');
+  };
+
   const tryPlay = async (reason = 'auto') => {
     if (!audio || !audio.paused) return;
 
@@ -77,6 +86,7 @@ if (audio) {
       audio.muted = false;
       audio.load();
       await audio.play();
+      dismissEntry();
       fadeAudio(targetVolume);
       setAudioUI(false, true);
 
@@ -125,10 +135,13 @@ if (audio) {
     }, { passive: false });
   }
 
-  // Attempt to play audio immediately on script execution.
-  // NOTE: Modern browsers often block autoplay without user interaction.
-  // If blocked, the user will need to click the audio toggle to start it.
-  tryPlay();
+  if (entryButton) {
+    entryButton.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      if (navigator.vibrate) navigator.vibrate(8);
+      await tryPlay('user');
+    });
+  }
 
   const initLoader = async () => {
     const images = [...document.querySelectorAll('.layer')];
