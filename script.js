@@ -77,6 +77,8 @@ if (audio) {
     entryVeil.classList.add('hidden');
     entryVeil.setAttribute('aria-hidden', 'true');
     entryVeil.setAttribute('inert', '');
+    const progress = document.querySelector('.progress');
+    if (progress) progress.style.opacity = '1';
   };
 
   const tryPlay = async (reason = 'auto') => {
