@@ -17,7 +17,7 @@ html::-webkit-scrollbar { display: none; } /* Chrome/Safari */
 body{
   overflow-x: hidden;
   overflow: hidden;
-  touch-action: none;
+  touch-action: manipulation;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
   -webkit-touch-callout: none;
@@ -382,6 +382,7 @@ body {
 }
 .entry-btn {
   position: relative;
+  z-index: 260;
   display: inline-flex;
   align-items: center;
   justify-content: center;

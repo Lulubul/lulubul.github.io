@@ -11,11 +11,30 @@ const smoothstep=(a,b,x)=>{const t=clamp((x-a)/(b-a),0,1);return t*t*(3-2*t)};
 
 const bindInteraction = (element, handler) => {
   if (!element) return;
-  element.addEventListener('click', handler);
-  element.addEventListener('touchend', (event) => {
-    event.preventDefault();
-    handler(event);
+
+  let isTouchHandled = false;
+
+  const runHandler = async (event) => {
+    if (typeof handler === 'function') {
+      await handler(event);
+    }
+  };
+
+  element.addEventListener('pointerup', (event) => {
+    if (event.pointerType === 'touch') {
+      event.preventDefault();
+      isTouchHandled = true;
+      runHandler(event);
+    }
   }, { passive: false });
+
+  element.addEventListener('click', (event) => {
+    if (isTouchHandled) {
+      isTouchHandled = false;
+      return;
+    }
+    runHandler(event);
+  });
 };
 
 let ticking=false;
