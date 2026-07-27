@@ -8,6 +8,16 @@ const entryVeil = document.getElementById('entry-veil');
 const entryButton = document.getElementById('entry-btn');
 const clamp=(n,min,max)=>Math.max(min,Math.min(max,n));
 const smoothstep=(a,b,x)=>{const t=clamp((x-a)/(b-a),0,1);return t*t*(3-2*t)};
+
+const bindInteraction = (element, handler) => {
+  if (!element) return;
+  element.addEventListener('click', handler);
+  element.addEventListener('touchend', (event) => {
+    event.preventDefault();
+    handler(event);
+  }, { passive: false });
+};
+
 let ticking=false;
 let activeChapter = 0;
 
@@ -114,7 +124,7 @@ if (audio) {
   };
   
   if (audioToggle) {
-    audioToggle.addEventListener('click', async (e) => {
+    bindInteraction(audioToggle, async (e) => {
       e.stopPropagation();
 
       // Haptic feedback on iOS
@@ -129,21 +139,13 @@ if (audio) {
         setAudioUI(true, false);
       }
     });
-    
-    // Add touchend for better mobile responsiveness
-    audioToggle.addEventListener('touchend', (e) => {
-      e.preventDefault();
-      audioToggle.click();
-    }, { passive: false });
   }
 
-  if (entryButton) {
-    entryButton.addEventListener('click', async (e) => {
-      e.stopPropagation();
-      if (navigator.vibrate) navigator.vibrate(8);
-      await tryPlay('user');
-    });
-  }
+  bindInteraction(entryButton, async (e) => {
+    e.stopPropagation();
+    if (navigator.vibrate) navigator.vibrate(8);
+    await tryPlay('user');
+  });
 
   const initLoader = async () => {
     const images = [...document.querySelectorAll('.layer')];
