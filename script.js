@@ -175,6 +175,7 @@ if (audio) {
   bindInteraction(entryButton, async (e) => {
     e.stopPropagation();
     if (navigator.vibrate) navigator.vibrate(8);
+    dismissEntry();
     await tryPlay('user');
   });
 
